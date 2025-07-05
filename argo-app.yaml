@@ -1,4 +1,3 @@
-# argo-app.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -7,13 +6,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/chan-hi/prometheus-gitops.git
-    targetRevision: HEAD
+    repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
+    targetRevision: 56.3.0   # 또는 HEAD (최신 버전 사용 시)
     helm:
       valueFiles:
-        - values/values.yaml
-    path: .
+        - https://raw.githubusercontent.com/chan-hi/prometheus-gitops/main/values/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
