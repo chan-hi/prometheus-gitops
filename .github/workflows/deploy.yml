@@ -1,0 +1,18 @@
+# .github/workflows/deploy.yml
+name: Sync Argo CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'values/**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Argo CD Sync
+        run: |
+          curl -k -X POST https://your-argo-cd-url/api/v1/applications/prometheus-stack/sync \
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}"
