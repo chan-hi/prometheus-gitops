@@ -7,7 +7,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://githuhttps://github.com/chan-hi/prometheus-gitops
+    repoURL: https://github.com/chan-hi/prometheus-gitops.git
     targetRevision: HEAD
     chart: kube-prometheus-stack
     helm:
