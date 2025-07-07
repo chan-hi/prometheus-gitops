@@ -25,6 +25,7 @@ kubelet:
 ## ================================
 alertmanager:
   alertmanagerSpec:
+    replicas: 2
 
 ## ================================
 ## kube-state-metrics 설정
