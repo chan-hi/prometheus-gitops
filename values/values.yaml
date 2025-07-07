@@ -71,6 +71,13 @@ grafana:
   service:
     type: NodePort
     nodePort: 30000
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
   # 기본 대시보드 자동 설정 (Prometheus + Node + k8s 리소스 포함)
   defaultDashboardsEnabled: true
   sidecar:
