@@ -70,7 +70,7 @@ grafana:
   adminPassword: newpassword123!
   service:
     type: NodePort
-    nodePort: 30000
+    nodePort: 30001
   replicas: 2
   resources:
     requests:
