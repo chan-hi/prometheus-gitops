@@ -18,9 +18,6 @@ loki:
 ## ================================
 promtail:
   enabled: true
-  config:
-    clients:
-      - url: http://logging-stack-loki:3100/loki/api/v1/push
 
 ## ================================
 ## Fluent Bit 설정 (비활성화)
