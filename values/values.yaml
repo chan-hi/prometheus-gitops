@@ -68,7 +68,7 @@ nodeExporter:
 grafana:
   enabled: true
   # Grafana 레플리카 설정
-  replicas: 2
+  replicas: 3
   adminPassword: newpassword123!
   service:
     type: NodePort
