@@ -71,7 +71,11 @@ grafana:
   service:
     type: NodePort
     nodePort: 30001
+  # Grafana 레플리카 설정
   replicas: 2
+  # 배포 전략 설정
+  deploymentStrategy:
+    type: RollingUpdate
   resources:
     requests:
       memory: "128Mi"
