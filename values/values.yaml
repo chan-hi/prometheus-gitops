@@ -6,7 +6,7 @@
 prometheus:
   prometheusSpec:
     # 데이터 보존 기간 설정 (기본값: 30d)
-    retention: 15d
+    retention: 20d
     # 모든 메트릭 수집집
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
