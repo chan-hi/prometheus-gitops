@@ -7,9 +7,18 @@ prometheus:
   prometheusSpec:
     # 데이터 보존 기간 설정 (기본값: 30d)
     retention: 20d
-    # 모든 메트릭 수집집
+    # Prometheus 레플리카 수 설정
+    replicas: 1
+    # 모든 ServiceMonitor/PodMonitor 수집
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
+
+## ================================
+## Alertmanager 설정
+## ================================
+alertmanager:
+  alertmanagerSpec:
+    replicas: 2
 
 ## ================================
 ## Kubelet 메트릭 설정 (기본 활성화됨)
@@ -21,20 +30,13 @@ kubelet:
     # cAdvisor, probes 등은 기본으로 활성화됨
 
 ## ================================
-## Alertmanager 설정
-## ================================
-alertmanager:
-  alertmanagerSpec:
-    replicas: 2
-
-## ================================
 ## kube-state-metrics 설정
 ## ================================
 kubeStateMetrics:
   enabled: true
 
 ## ================================
-## node-exporter 설정 (GitOps 테스트: 활성화)
+## node-exporter 설정
 ## ================================
 nodeExporter:
   enabled: true
@@ -44,19 +46,10 @@ nodeExporter:
 ## ================================
 grafana:
   enabled: true
-  # Grafana 레플리카 설정 (CI/CD 테스트)
-  replicaCount: 3
   adminPassword: admin
   service:
     type: NodePort
     nodePort: 30007
-  resources:
-    requests:
-      memory: "128Mi"
-      cpu: "100m"
-    limits:
-      memory: "256Mi"
-      cpu: "200m"
   # 기본 대시보드 자동 설정 (Prometheus + Node + k8s 리소스 포함)
   defaultDashboardsEnabled: true
   sidecar:
