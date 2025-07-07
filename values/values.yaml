@@ -84,7 +84,7 @@ grafana:
   adminPassword: newpassword123!
   service:
     type: NodePort
-    nodePort: 30004
+    nodePort: 30005
   resources:
     requests:
       memory: "128Mi"
