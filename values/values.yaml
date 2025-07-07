@@ -69,10 +69,10 @@ kubeStateMetrics:
   enabled: true
 
 ## ================================
-## node-exporter 설정
+## node-exporter 설정 (테스트: 비활성화)
 ## ================================
 nodeExporter:
-  enabled: true
+  enabled: false
 
 ## ================================
 ## Grafana 기본 설정
