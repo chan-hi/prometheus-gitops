@@ -21,10 +21,7 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - Replace=true
       - ServerSideApply=true
-      - ApplyOutOfSyncOnly=true
-      - Force=true
   ignoreDifferences:
     - group: apiextensions.k8s.io
       kind: CustomResourceDefinition
