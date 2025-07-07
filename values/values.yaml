@@ -21,27 +21,6 @@ alertmanager:
     replicas: 2
 
 ## ================================
-## Kubelet 메트릭 설정 (기본 활성화됨)
-## ================================
-kubelet:
-  enabled: true
-  serviceMonitor:
-    enabled: true
-    # cAdvisor, probes 등은 기본으로 활성화됨
-
-## ================================
-## kube-state-metrics 설정
-## ================================
-kubeStateMetrics:
-  enabled: true
-
-## ================================
-## node-exporter 설정
-## ================================
-nodeExporter:
-  enabled: true
-
-## ================================
 ## Grafana 기본 설정
 ## ================================
 grafana:
