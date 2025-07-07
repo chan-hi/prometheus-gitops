@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
-    targetRevision: 56.3.0   # 또는 HEAD (최신 버전 사용 시)
+    targetRevision: 56.3.0
     helm:
       valueFiles:
         - https://raw.githubusercontent.com/chan-hi/prometheus-gitops/main/values/values.yaml
@@ -21,3 +21,6 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
