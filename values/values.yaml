@@ -67,12 +67,12 @@ nodeExporter:
 ## ================================
 grafana:
   enabled: true
+  # Grafana 레플리카 설정 (최상위 레벨)
+  replicas: 2
   adminPassword: newpassword123!
   service:
     type: NodePort
     nodePort: 30001
-  # Grafana 레플리카 설정
-  replicas: 2
   # 배포 전략 설정
   deploymentStrategy:
     type: RollingUpdate
