@@ -1,0 +1,44 @@
+# logging-values.yaml
+
+## ================================
+## Loki 설정
+## ================================
+loki:
+  enabled: true
+  persistence:
+    enabled: true
+    storageClassName: standard
+    size: 10Gi
+  config:
+    limits_config:
+      retention_period: 168h  # 7일
+
+## ================================
+## Promtail 설정 (로그 수집기)
+## ================================
+promtail:
+  enabled: true
+  config:
+    clients:
+      - url: http://loki:3100/loki/api/v1/push
+
+## ================================
+## Fluent Bit 설정 (비활성화)
+## ================================
+fluent-bit:
+  enabled: false
+
+## ================================
+## Grafana 설정 (기존 사용)
+## ================================
+grafana:
+  enabled: false  # 기존 모니터링 스택의 Grafana 사용
+  
+## ================================
+## 기타 설정
+## ================================
+filebeat:
+  enabled: false
+
+logstash:
+  enabled: false
