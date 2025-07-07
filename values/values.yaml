@@ -67,12 +67,12 @@ nodeExporter:
 ## ================================
 grafana:
   enabled: true
+  # Grafana 레플리카 설정
+  replicas: 2
   adminPassword: newpassword123!
   service:
     type: NodePort
     nodePort: 30001
-  # Grafana 레플리카 설정 - 다른 방법 시도
-  replicaCount: 2
   resources:
     requests:
       memory: "128Mi"
