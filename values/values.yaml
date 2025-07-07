@@ -36,3 +36,8 @@ grafana:
       enabled: true
     datasources:
       enabled: true
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      url: http://logging-stack-loki.logging.svc.cluster.local:3100
+      access: proxy
