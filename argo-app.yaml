@@ -10,8 +10,21 @@ spec:
     chart: kube-prometheus-stack
     targetRevision: 56.3.0
     helm:
-      valueFiles:
-        - https://raw.githubusercontent.com/chan-hi/prometheus-gitops/main/values/values.yaml
+      values: |
+        nodeExporter:
+          enabled: false
+        prometheus:
+          prometheusSpec:
+            retention: 15d
+            replicas: 2
+        alertmanager:
+          alertmanagerSpec:
+            replicas: 2
+        grafana:
+          adminPassword: "testpassword123"
+          service:
+            type: NodePort
+            nodePort: 30003
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
