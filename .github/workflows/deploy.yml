@@ -10,9 +10,9 @@ on:
 
 jobs:
   sync-argocd:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Sync Argo CD Application
         run: |
-          curl -k -X POST https://localhost:8080/api/v1/applications/prometheus-stack/sync \
+          curl -k -X POST https://192.168.49.2:30169/api/v1/applications/prometheus-stack/sync \
             -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}"
