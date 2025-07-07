@@ -67,7 +67,7 @@ nodeExporter:
 ## ================================
 grafana:
   enabled: true
-  adminPassword: admin!
+  adminPassword: admin123123123
   service:
     type: NodePort
     nodePort: 30000
