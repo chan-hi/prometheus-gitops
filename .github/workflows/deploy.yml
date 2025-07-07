@@ -12,37 +12,9 @@ jobs:
   sync-argocd:
     runs-on: self-hosted
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
       - name: Sync Argo CD Application
         run: |
-          echo "🚀 Triggering ArgoCD sync for prometheus-stack..."
-          echo "📝 Changed files in this push:"
-          git diff --name-only HEAD~1 HEAD
-          
-          response=$(curl -k -s -w "%{http_code}" -X POST \
-            https://192.168.49.2:30169/api/v1/applications/prometheus-stack/sync \
+          curl -k -X POST https://192.168.49.2:30169/api/v1/applications/prometheus-stack/sync \
             -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{}')
-          
-          http_code="${response: -3}"
-          body="${response%???}"
-          
-          echo "HTTP Status Code: $http_code"
-          echo "Response Body: $body"
-          
-          if [ "$http_code" -eq 200 ]; then
-            echo "✅ ArgoCD sync triggered successfully!"
-          else
-            echo "❌ ArgoCD sync failed!"
-            exit 1
-          fi
-          
-      - name: Check Sync Status (Optional)
-        run: |
-          echo "🔍 Checking application status..."
-          curl -k -s -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
-            https://192.168.49.2:30169/api/v1/applications/prometheus-stack | \
-            jq -r '.status.sync.status, .status.health.status' || echo "Status check failed"
+            -d '{}'
