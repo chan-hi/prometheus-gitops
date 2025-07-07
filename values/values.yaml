@@ -5,6 +5,10 @@
 ## ================================
 prometheus:
   prometheusSpec:
+    # 데이터 보존 기간 설정 (기본값: 30d)
+    retention: 15d
+    # Prometheus 레플리카 수 설정
+    replicas: 2
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
     # Kubelet 관련 지표 수집
@@ -49,6 +53,14 @@ prometheus:
           - action: labelmap
             regex: __meta_kubernetes_node_label_(.+)
         metrics_path: /metrics/resource
+
+## ================================
+## Alertmanager 설정
+## ================================
+alertmanager:
+  alertmanagerSpec:
+    # Alertmanager 레플리카 수 설정
+    replicas: 2
 
 ## ================================
 ## kube-state-metrics 설정
