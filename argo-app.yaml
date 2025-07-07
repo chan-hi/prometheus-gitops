@@ -5,26 +5,16 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://prometheus-community.github.io/helm-charts
-    chart: kube-prometheus-stack
-    targetRevision: 56.3.0
-    helm:
-      values: |
-        nodeExporter:
-          enabled: false
-        prometheus:
-          prometheusSpec:
-            retention: 15d
-            replicas: 2
-        alertmanager:
-          alertmanagerSpec:
-            replicas: 2
-        grafana:
-          adminPassword: "testpassword123"
-          service:
-            type: NodePort
-            nodePort: 30003
+  sources:
+    - repoURL: https://prometheus-community.github.io/helm-charts
+      chart: kube-prometheus-stack
+      targetRevision: 56.3.0
+      helm:
+        valueFiles:
+          - $values/values/values.yaml
+    - repoURL: https://github.com/chan-hi/prometheus-gitops.git
+      targetRevision: main
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

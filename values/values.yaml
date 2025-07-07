@@ -69,10 +69,10 @@ kubeStateMetrics:
   enabled: true
 
 ## ================================
-## node-exporter 설정 (테스트: 비활성화)
+## node-exporter 설정 (GitOps 테스트: 활성화)
 ## ================================
 nodeExporter:
-  enabled: false
+  enabled: true
 
 ## ================================
 ## Grafana 기본 설정
@@ -84,7 +84,7 @@ grafana:
   adminPassword: newpassword123!
   service:
     type: NodePort
-    nodePort: 30003
+    nodePort: 30004
   resources:
     requests:
       memory: "128Mi"
