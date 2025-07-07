@@ -68,11 +68,11 @@ nodeExporter:
 grafana:
   enabled: true
   # Grafana 레플리카 설정 (CI/CD 테스트)
-  replicas: 3
+  replicaCount: 3
   adminPassword: newpassword123!
   service:
     type: NodePort
-    nodePort: 30002
+    nodePort: 30003
   resources:
     requests:
       memory: "128Mi"
