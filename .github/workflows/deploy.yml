@@ -15,4 +15,6 @@ jobs:
       - name: Sync Argo CD Application
         run: |
           curl -k -X POST https://192.168.49.2:30169/api/v1/applications/prometheus-stack/sync \
-            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}"
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
