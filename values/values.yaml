@@ -71,6 +71,7 @@ grafana:
   service:
     type: NodePort
     nodePort: 30000
+  replicas: 2
   resources:
     requests:
       memory: "128Mi"
