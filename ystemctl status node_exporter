@@ -1,0 +1,21 @@
+[0;1;32m●[0m grafana-server.service - Grafana instance
+     Loaded: loaded (]8;;file://lch/usr/lib/systemd/system/grafana-server.service/usr/lib/systemd/system/grafana-server.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Mon 2025-07-07 12:28:25 KST; 8h ago
+       Docs: ]8;;http://docs.grafana.orghttp://docs.grafana.org]8;;
+   Main PID: 1054 (grafana)
+      Tasks: 29 (limit: 38322)
+     Memory: 307.2M (peak: 320.8M)
+        CPU: 1min 7.699s
+     CGroup: /system.slice/grafana-server.service
+             └─[0;38;5;245m1054 /usr/share/grafana/bin/grafana server --config=/etc/grafana/grafana.ini --pidfile=/run/grafana/grafana-server.pid --packaging=deb cfg:default.paths.logs=/var/log/grafana cfg:default.paths.data=/var/lib/grafana cfg:default.paths.plugins=/var/lib/grafana/plugins cfg:default.paths.provisioning=/etc/grafana/provisioning[0m
+
+Jul 07 20:08:27 lch grafana[1054]: logger=plugins.update.checker t=2025-07-07T20:08:27.154554738+09:00 level=info msg="Update check succeeded" duration=337.268779ms
+Jul 07 20:18:26 lch grafana[1054]: logger=cleanup t=2025-07-07T20:18:26.863127505+09:00 level=info msg="Completed cleanup jobs" duration=47.426804ms
+Jul 07 20:18:27 lch grafana[1054]: logger=plugins.update.checker t=2025-07-07T20:18:27.16007711+09:00 level=info msg="Update check succeeded" duration=342.344462ms
+Jul 07 20:28:26 lch grafana[1054]: logger=cleanup t=2025-07-07T20:28:26.838990008+09:00 level=info msg="Completed cleanup jobs" duration=23.046039ms
+Jul 07 20:28:27 lch grafana[1054]: logger=plugins.update.checker t=2025-07-07T20:28:27.149517571+09:00 level=info msg="Update check succeeded" duration=332.430545ms
+Jul 07 20:30:08 lch grafana[1054]: logger=infra.usagestats t=2025-07-07T20:30:08.833326811+09:00 level=info msg="Usage stats are ready to report"
+Jul 07 20:38:26 lch grafana[1054]: logger=cleanup t=2025-07-07T20:38:26.863054167+09:00 level=info msg="Completed cleanup jobs" duration=47.376234ms
+Jul 07 20:38:27 lch grafana[1054]: logger=plugins.update.checker t=2025-07-07T20:38:27.154972257+09:00 level=info msg="Update check succeeded" duration=337.254975ms
+Jul 07 20:48:26 lch grafana[1054]: logger=cleanup t=2025-07-07T20:48:26.880265369+09:00 level=info msg="Completed cleanup jobs" duration=64.245584ms
+Jul 07 20:48:27 lch grafana[1054]: logger=plugins.update.checker t=2025-07-07T20:48:27.152814383+09:00 level=info msg="Update check succeeded" duration=335.694652ms

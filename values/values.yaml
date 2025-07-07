@@ -7,8 +7,7 @@ prometheus:
   prometheusSpec:
     # 데이터 보존 기간 설정 (기본값: 30d)
     retention: 15d
-    # Prometheus 레플리카 수 설정
-    replicas: 2
+    # 모든 메트릭 수집집
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
 
@@ -26,8 +25,6 @@ kubelet:
 ## ================================
 alertmanager:
   alertmanagerSpec:
-    # Alertmanager 레플리카 수 설정
-    replicas: 2
 
 ## ================================
 ## kube-state-metrics 설정
@@ -48,7 +45,7 @@ grafana:
   enabled: true
   # Grafana 레플리카 설정 (CI/CD 테스트)
   replicaCount: 3
-  adminPassword: newpassword123!
+  adminPassword: admin
   service:
     type: NodePort
     nodePort: 30006

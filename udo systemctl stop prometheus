@@ -1,0 +1,20 @@
+[0;1;32m●[0m prometheus.service - Prometheus Monitoring
+     Loaded: loaded (]8;;file://lch/etc/systemd/system/prometheus.service/etc/systemd/system/prometheus.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Mon 2025-07-07 12:28:25 KST; 8h ago
+   Main PID: 1060 (prometheus)
+      Tasks: 30 (limit: 38322)
+     Memory: 146.8M (peak: 197.1M)
+        CPU: 24.983s
+     CGroup: /system.slice/prometheus.service
+             └─[0;38;5;245m1060 /opt/prometheus/prometheus --config.file=/opt/prometheus/prometheus.yml --storage.tsdb.path=/opt/prometheus/data --web.console.templates=/opt/prometheus/consoles --web.console.libraries=/opt/prometheus/console_libraries[0m
+
+Jul 07 20:00:04 lch prometheus[1060]: time=2025-07-07T11:00:04.351Z level=INFO source=compact.go:602 msg="write block" component=tsdb mint=1751875204178 maxt=1751882400000 ulid=01JZJ8NZZTMYKC7MN7EFHQRX73 duration=132.645363ms ooo=false
+Jul 07 20:00:04 lch prometheus[1060]: time=2025-07-07T11:00:04.355Z level=INFO source=head.go:1410 msg="Head GC completed" component=tsdb caller=truncateMemory duration=2.844595ms
+Jul 07 20:00:04 lch prometheus[1060]: time=2025-07-07T11:00:04.356Z level=INFO source=checkpoint.go:100 msg="Creating checkpoint" component=tsdb from_segment=18 to_segment=19 mint=1751882400000
+Jul 07 20:00:04 lch prometheus[1060]: time=2025-07-07T11:00:04.422Z level=INFO source=head.go:1372 msg="WAL checkpoint complete" component=tsdb first=18 last=19 duration=66.838855ms
+Jul 07 20:00:04 lch prometheus[1060]: time=2025-07-07T11:00:04.550Z level=INFO source=compact.go:541 msg="compact blocks" component=tsdb count=2 mint=1751855314176 maxt=1751868000000 ulid=01JZJ8P067WB2V7N21KAPTSDDV sources="[01JZHNQ05EF94AVDZRQ2MASWG0 01JZHTYK73TH2P61351SSTYMJG]" duration=127.545202ms
+Jul 07 20:00:04 lch prometheus[1060]: time=2025-07-07T11:00:04.558Z level=INFO source=db.go:1813 msg="Deleting obsolete block" component=tsdb block=01JZHNQ05EF94AVDZRQ2MASWG0
+Jul 07 20:00:04 lch prometheus[1060]: time=2025-07-07T11:00:04.565Z level=INFO source=db.go:1813 msg="Deleting obsolete block" component=tsdb block=01JZHTYK73TH2P61351SSTYMJG
+Jul 07 20:00:04 lch prometheus[1060]: time=2025-07-07T11:00:04.715Z level=INFO source=compact.go:541 msg="compact blocks" component=tsdb count=2 mint=1751813359173 maxt=1751868000000 ulid=01JZJ8P0ANM3RVQMHB1TYMY0WX sources="[01JZHTYKBYTF03W95HVEMR38P0 01JZJ8P067WB2V7N21KAPTSDDV]" duration=150.18131ms
+Jul 07 20:00:04 lch prometheus[1060]: time=2025-07-07T11:00:04.726Z level=INFO source=db.go:1813 msg="Deleting obsolete block" component=tsdb block=01JZHTYKBYTF03W95HVEMR38P0
+Jul 07 20:00:04 lch prometheus[1060]: time=2025-07-07T11:00:04.736Z level=INFO source=db.go:1813 msg="Deleting obsolete block" component=tsdb block=01JZJ8P067WB2V7N21KAPTSDDV
