@@ -8,6 +8,8 @@ on:
       - 'values/**'
       - 'argo-app.yaml'
       - 'logging-app.yaml'
+      - 'efk-values.yaml'
+      - 'efk-argo-app.yaml'
 
 jobs:
   sync-argocd:
@@ -23,6 +25,13 @@ jobs:
       - name: Sync Logging Stack
         run: |
           curl -k -X POST https://192.168.49.2:30169/api/v1/applications/logging-stack/sync \
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+      
+      - name: Sync EFK Stack
+        run: |
+          curl -k -X POST https://192.168.49.2:30169/api/v1/applications/efk-stack/sync \
             -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{}'

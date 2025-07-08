@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: efk-stack
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://fluent.github.io/helm-charts
+      chart: fluent-bit
+      targetRevision: 0.25.0
+      helm:
+        valueFiles:
+          - $values/efk-values.yaml
+        releaseName: fluent-bit
+    - repoURL: https://helm.elastic.co
+      chart: elasticsearch
+      targetRevision: 8.5.1
+      helm:
+        valueFiles:
+          - $values/efk-values.yaml
+        releaseName: elasticsearch
+    - repoURL: https://helm.elastic.co
+      chart: kibana
+      targetRevision: 8.5.1
+      helm:
+        valueFiles:
+          - $values/efk-values.yaml
+        releaseName: kibana
+    - repoURL: https://github.com/chan-hi/prometheus-gitops.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: logging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /spec/volumeClaimTemplates
+    - group: ""
+      kind: ServiceAccount
+      jsonPointers:
+        - /automountServiceAccountToken
