@@ -19,9 +19,23 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{}'
       
-      - name: Sync EFK Stack
+      - name: Sync Fluent Bit
         run: |
-          curl -k -X POST https://192.168.49.2:30169/api/v1/applications/efk-stack/sync \
+          curl -k -X POST https://192.168.49.2:30169/api/v1/applications/fluent-bit/sync \
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+      
+      - name: Sync Elasticsearch
+        run: |
+          curl -k -X POST https://192.168.49.2:30169/api/v1/applications/elasticsearch/sync \
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+      
+      - name: Sync Kibana
+        run: |
+          curl -k -X POST https://192.168.49.2:30169/api/v1/applications/kibana/sync \
             -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{}'

@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: efk-stack
+  name: fluent-bit
   namespace: argocd
 spec:
   project: default
@@ -12,12 +12,56 @@ spec:
       helm:
         valueFiles:
           - $values/logging/fluent-bit/values.yaml
+    - repoURL: https://github.com/chan-hi/prometheus-gitops.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: logging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: elasticsearch
+  namespace: argocd
+spec:
+  project: default
+  sources:
     - repoURL: https://helm.elastic.co
       chart: elasticsearch
       targetRevision: 8.5.1
       helm:
         valueFiles:
           - $values/logging/elasticsearch/values.yaml
+    - repoURL: https://github.com/chan-hi/prometheus-gitops.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: logging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kibana
+  namespace: argocd
+spec:
+  project: default
+  sources:
     - repoURL: https://helm.elastic.co
       chart: kibana
       targetRevision: 8.5.1
@@ -37,8 +81,3 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
-  ignoreDifferences:
-    - group: apps
-      kind: Deployment
-      jsonPointers:
-        - /spec/replicas
