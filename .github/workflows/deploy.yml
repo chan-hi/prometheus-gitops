@@ -5,11 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'values/**'
-      - 'argo-app.yaml'
-      - 'logging-app.yaml'
-      - 'efk-values.yaml'
-      - 'efk-argo-app.yaml'
+      - 'monitoring/**'
+      - 'logging/**'
 
 jobs:
   sync-argocd:
@@ -18,13 +15,6 @@ jobs:
       - name: Sync Monitoring Stack
         run: |
           curl -k -X POST https://192.168.49.2:30169/api/v1/applications/prometheus-stack/sync \
-            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{}'
-      
-      - name: Sync Logging Stack
-        run: |
-          curl -k -X POST https://192.168.49.2:30169/api/v1/applications/logging-stack/sync \
             -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{}'

@@ -8,25 +8,22 @@ spec:
   sources:
     - repoURL: https://fluent.github.io/helm-charts
       chart: fluent-bit
-      targetRevision: 0.25.0
+      targetRevision: 0.43.0
       helm:
         valueFiles:
-          - $values/efk-values.yaml
-        releaseName: fluent-bit
+          - $values/logging/fluent-bit/values.yaml
     - repoURL: https://helm.elastic.co
       chart: elasticsearch
       targetRevision: 8.5.1
       helm:
         valueFiles:
-          - $values/efk-values.yaml
-        releaseName: elasticsearch
+          - $values/logging/elasticsearch/values.yaml
     - repoURL: https://helm.elastic.co
       chart: kibana
       targetRevision: 8.5.1
       helm:
         valueFiles:
-          - $values/efk-values.yaml
-        releaseName: kibana
+          - $values/logging/kibana/values.yaml
     - repoURL: https://github.com/chan-hi/prometheus-gitops.git
       targetRevision: main
       ref: values
@@ -42,10 +39,6 @@ spec:
       - ServerSideApply=true
   ignoreDifferences:
     - group: apps
-      kind: StatefulSet
+      kind: Deployment
       jsonPointers:
-        - /spec/volumeClaimTemplates
-    - group: ""
-      kind: ServiceAccount
-      jsonPointers:
-        - /automountServiceAccountToken
+        - /spec/replicas
