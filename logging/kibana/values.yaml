@@ -44,9 +44,5 @@ kibanaConfig:
 extraEnvs:
   - name: "NODE_OPTIONS"
     value: "--max-old-space-size=1800"
-  - name: "ELASTICSEARCH_USERNAME"
-    value: "elastic"
-  - name: "ELASTICSEARCH_PASSWORD"
-    value: "changeme"
 
 secretMounts: []

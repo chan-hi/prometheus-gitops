@@ -65,8 +65,6 @@ config:
         Match kube.*
         Host elasticsearch-master
         Port 9200
-        HTTP_User elastic
-        HTTP_Passwd changeme
         Logstash_Format On
         Logstash_Prefix kubernetes
         Retry_Limit 3
@@ -79,8 +77,6 @@ config:
         Match host.*
         Host elasticsearch-master
         Port 9200
-        HTTP_User elastic
-        HTTP_Passwd changeme
         Logstash_Format On
         Logstash_Prefix systemd
         Retry_Limit 3
