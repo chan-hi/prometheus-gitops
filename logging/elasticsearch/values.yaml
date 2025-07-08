@@ -14,12 +14,14 @@ esConfig:
     discovery.type: single-node
     xpack.security.enabled: false
     xpack.security.enrollment.enabled: false
+    xpack.security.transport.ssl.enabled: false
+    xpack.security.http.ssl.enabled: false
 
 extraEnvs:
   - name: ELASTIC_PASSWORD
-    value: ""
+    value: "changeme"
   - name: ELASTIC_USERNAME
-    value: ""
+    value: "elastic"
 
 secretMounts: []
 
