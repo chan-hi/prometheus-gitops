@@ -3,7 +3,7 @@ nodeGroup: "master"
 
 replicas: 1
 
-minimumMasterNodes: 1
+minimumMasterNodes: 0
 
 esMajorVersion: ""
 
