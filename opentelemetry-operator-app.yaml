@@ -13,21 +13,30 @@ spec:
     targetRevision: 0.91.1
     helm:
       values: |
+        replicaCount: 1
+        
         manager:
           env:
             ENABLE_WEBHOOKS: "true"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 64Mi
+        
         admissionWebhooks:
+          create: true
           certManager:
             enabled: false
-            autoGenerateCert: true
-        replicaCount: 1
-        resources:
-          limits:
-            cpu: 500m
-            memory: 128Mi
-          requests:
-            cpu: 100m
-            memory: 64Mi
+          autoGenerateCert:
+            enabled: true
+            recreate: true
+            certPeriodDays: 365
+        
+        crds:
+          create: true
   destination:
     server: https://kubernetes.default.svc
     namespace: opentelemetry-operator-system
