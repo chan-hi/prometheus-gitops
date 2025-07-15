@@ -1,0 +1,81 @@
+---
+# Namespace for OpenTelemetry infrastructure
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: opentelemetry-system
+  labels:
+    name: opentelemetry-system
+
+---
+# OpenTelemetry Collector (Infrastructure Level)
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel-collector
+  namespace: opentelemetry-system
+spec:
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+    
+    processors:
+      batch: {}
+      resource:
+        attributes:
+        - key: cluster.name
+          value: "minikube"
+          action: insert
+    
+    exporters:
+      debug:
+        verbosity: detailed
+      otlp:
+        endpoint: tempo-stack.monitoring.svc.cluster.local:4317
+        tls:
+          insecure: true
+    
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch, resource]
+          exporters: [debug, otlp]
+        metrics:
+          receivers: [otlp]
+          processors: [batch, resource]
+          exporters: [debug]
+        logs:
+          receivers: [otlp]
+          processors: [batch, resource]
+          exporters: [debug]
+
+---
+# Service to expose collector across namespaces
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector-gateway
+  namespace: opentelemetry-system
+  labels:
+    app: otel-collector-gateway
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/component: opentelemetry-collector
+    app.kubernetes.io/instance: otel-collector
+    app.kubernetes.io/name: opentelemetry-collector
+  ports:
+  - name: otlp-grpc
+    port: 4317
+    targetPort: 4317
+    protocol: TCP
+  - name: otlp-http
+    port: 4318
+    targetPort: 4318
+    protocol: TCP
