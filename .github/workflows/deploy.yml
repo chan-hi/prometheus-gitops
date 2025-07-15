@@ -8,11 +8,19 @@ on:
       - 'values/**'
       - 'argo-app.yaml'
       - 'logging-app.yaml'
+      - 'prometheus-crds.yaml'
 
 jobs:
   sync-argocd:
     runs-on: self-hosted
     steps:
+      - name: Sync Prometheus CRDs
+        run: |
+          curl -k -X POST https://192.168.49.2:30169/api/v1/applications/prometheus-crds/sync \
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+      
       - name: Sync Monitoring Stack
         run: |
           curl -k -X POST https://192.168.49.2:30169/api/v1/applications/prometheus-stack/sync \
