@@ -28,5 +28,5 @@ spec:
   ignoreDifferences:
     - group: apps
       kind: StatefulSet
-      jsonPointers:
-        - /spec/persistentVolumeClaimRetentionPolicy
+      managedFieldsManagers:
+        - kube-controller-manager

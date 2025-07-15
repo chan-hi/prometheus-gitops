@@ -14,19 +14,24 @@ loki:
       retention_period: 168h  # 7일
 
 ## ================================
-## Promtail 설정 (로그 수집기)
+## Promtail 설정 (비활성화)
 ## ================================
 promtail:
-  enabled: true
-  config:
-    clients:
-      - url: http://logging-stack-loki:3100/loki/api/v1/push
+  enabled: false
 
 ## ================================
-## Fluent Bit 설정 (비활성화)
+## Fluent Bit 설정 (로그 수집기)
 ## ================================
 fluent-bit:
-  enabled: false
+  enabled: true
+  config:
+    outputs: |
+      [OUTPUT]
+          Name loki
+          Match *
+          Host logging-stack-loki
+          Port 3100
+          Labels job=fluent-bit
 
 ## ================================
 ## Grafana 설정 (기존 사용)
