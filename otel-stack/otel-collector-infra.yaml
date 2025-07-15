@@ -15,7 +15,7 @@ metadata:
   name: otel-collector
   namespace: opentelemetry-system
 spec:
-  config: |
+  config:
     receivers:
       otlp:
         protocols:
