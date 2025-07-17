@@ -9,6 +9,8 @@ on:
       - 'argo-app.yaml'
       - 'logging-app.yaml'
       - 'prometheus-crds.yaml'
+      - 'msa-demo-app.yaml'
+      - 'msa-demo/**'
 
 jobs:
   sync-argocd:
@@ -31,6 +33,13 @@ jobs:
       - name: Sync Logging Stack
         run: |
           curl -k -X POST https://192.168.49.2:30169/api/v1/applications/logging-stack/sync \
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+      
+      - name: Sync MSA Demo
+        run: |
+          curl -k -X POST https://192.168.49.2:30169/api/v1/applications/msa-demo/sync \
             -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{}'

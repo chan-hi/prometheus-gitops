@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tempo-stack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: tempo
+    targetRevision: 1.7.2
+    helm:
+      parameters:
+        - name: tempo.storage.trace.backend
+          value: "local"
+        - name: tempo.storage.trace.local.path
+          value: "/var/tempo/traces"
+        - name: tempo.receivers.otlp.protocols.grpc.endpoint
+          value: "0.0.0.0:4317"
+        - name: tempo.receivers.otlp.protocols.http.endpoint
+          value: "0.0.0.0:4318"
+        - name: serviceMonitor.enabled
+          value: "true"
+        - name: persistence.enabled
+          value: "true"
+        - name: persistence.size
+          value: "10Gi"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
