@@ -38,7 +38,7 @@ class OrderController {
         ));
         response.put("totalOrders", 3);
         response.put("service", "order-service");
-        response.put("version", "2.0");
+        response.put("version", "3.0");
         response.put("lastUpdated", java.time.LocalDateTime.now().toString());
         
         return response;
@@ -64,6 +64,6 @@ class OrderController {
 
     @GetMapping("/health")
     public Map<String, String> health() {
-        return Map.of("status", "UP", "service", "order-service", "version", "2.0", "message", "Enhanced Order Service");
+        return Map.of("status", "UP", "service", "order-service", "version", "3.0", "message", "Improved Pipeline Order Service");
     }
 }
