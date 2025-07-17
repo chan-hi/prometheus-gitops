@@ -56,9 +56,9 @@ class UserController {
 
         Map<String, Object> user = new HashMap<>();
         user.put("userId", userId);
-        user.put("name", "User " + userId + " (Updated v2.0)");
+        user.put("name", "User " + userId + " (CI/CD Test v2.1)");
         user.put("email", "user" + userId + "@example.com");
-        user.put("version", "2.0");
+        user.put("version", "2.1");
         user.put("lastUpdated", java.time.LocalDateTime.now().toString());
         user.put("orders", orders);
         user.put("payments", payments);
@@ -69,6 +69,6 @@ class UserController {
 
     @GetMapping("/health")
     public Map<String, String> health() {
-        return Map.of("status", "UP", "service", "user-service", "version", "2.0", "message", "CI/CD Test Version");
+        return Map.of("status", "UP", "service", "user-service", "version", "2.1", "message", "ECR Push Test Version");
     }
 }
