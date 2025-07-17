@@ -1,0 +1,65 @@
+name: MSA Application CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'msa-app/**'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: 557690584596.dkr.ecr.ap-northeast-2.amazonaws.com/gitops/msa-app
+  
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        service: [user-service, order-service, payment-service]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      run: |
+        aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REPOSITORY }}
+
+    - name: Build Docker image
+      run: |
+        cd msa-app/${{ matrix.service }}
+        docker build -t ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-${{ github.sha }} .
+        docker tag ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-${{ github.sha }} ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-latest
+
+    - name: Push Docker image to ECR
+      run: |
+        docker push ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-${{ github.sha }}
+        docker push ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-latest
+
+    - name: Update Kubernetes manifests
+      run: |
+        sed -i 's|${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-.*|${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-${{ github.sha }}|g' msa-demo/k8s-manifests-final.yaml
+
+    - name: Commit and push updated manifests
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add msa-demo/k8s-manifests-final.yaml
+        git commit -m "Update ${{ matrix.service }} image tag to ${{ github.sha }}" || exit 0
+        git push
+
+    - name: Trigger ArgoCD Sync
+      run: |
+        sleep 10  # Wait for git push to complete
+        curl -k -X POST https://192.168.49.2:30169/api/v1/applications/msa-demo/sync \
+          -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{}'
