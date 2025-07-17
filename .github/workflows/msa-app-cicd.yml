@@ -13,11 +13,15 @@ env:
   ECR_REPOSITORY: 557690584596.dkr.ecr.ap-northeast-2.amazonaws.com/gitops/msa-app
   
 jobs:
-  build-and-deploy:
+  build:
     runs-on: self-hosted
     strategy:
       matrix:
         service: [user-service, order-service, payment-service]
+    outputs:
+      user-service-tag: ${{ steps.set-output.outputs.user-service-tag }}
+      order-service-tag: ${{ steps.set-output.outputs.order-service-tag }}
+      payment-service-tag: ${{ steps.set-output.outputs.payment-service-tag }}
     
     steps:
     - name: Checkout code
@@ -43,21 +47,53 @@ jobs:
         docker push ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-${{ github.sha }}
         docker push ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-latest
 
+    - name: Set output
+      id: set-output
+      run: |
+        echo "${{ matrix.service }}-tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+  update-manifests:
+    needs: build
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
     - name: Update Kubernetes manifests
       run: |
-        sed -i 's|${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-.*|${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-${{ github.sha }}|g' msa-demo/k8s-manifests-final.yaml
+        # Update each service image tag
+        sed -i 's|${{ env.ECR_REPOSITORY }}:user-service-.*|${{ env.ECR_REPOSITORY }}:user-service-${{ github.sha }}|g' msa-demo/k8s-manifests-final.yaml
+        sed -i 's|${{ env.ECR_REPOSITORY }}:order-service-.*|${{ env.ECR_REPOSITORY }}:order-service-${{ github.sha }}|g' msa-demo/k8s-manifests-final.yaml
+        sed -i 's|${{ env.ECR_REPOSITORY }}:payment-service-.*|${{ env.ECR_REPOSITORY }}:payment-service-${{ github.sha }}|g' msa-demo/k8s-manifests-final.yaml
+
+    - name: Update ECR secret
+      run: |
+        # Update ECR secret for Kubernetes cluster
+        kubectl delete secret ecr-secret -n msa-demo --ignore-not-found=true
+        kubectl create secret docker-registry ecr-secret \
+          --docker-server=${{ env.ECR_REPOSITORY }} \
+          --docker-username=AWS \
+          --docker-password=$(aws ecr get-login-password --region ${{ env.AWS_REGION }}) \
+          --namespace=msa-demo
 
     - name: Commit and push updated manifests
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add msa-demo/k8s-manifests-final.yaml
-        git commit -m "Update ${{ matrix.service }} image tag to ${{ github.sha }}" || exit 0
-        git push
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Update MSA services to SHA ${{ github.sha }}"
+          git push
+        fi
 
     - name: Trigger ArgoCD Sync
       run: |
-        sleep 10  # Wait for git push to complete
+        sleep 15  # Wait for git push to complete
         curl -k -X POST https://192.168.49.2:30169/api/v1/applications/msa-demo/sync \
           -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
           -H "Content-Type: application/json" \
