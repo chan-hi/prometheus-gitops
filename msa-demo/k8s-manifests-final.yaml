@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: user-service
-        image: 557690584596.dkr.ecr.ap-northeast-2.amazonaws.com/gitops/msa-app:user-service-latest
+        image: 557690584596.dkr.ecr.ap-northeast-2.amazonaws.com/gitops/msa-app:payment-service-e1094c1d17e3d7e82a844f95c32a5a227cb36994
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
