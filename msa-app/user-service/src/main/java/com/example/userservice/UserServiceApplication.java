@@ -69,6 +69,6 @@ class UserController {
 
     @GetMapping("/health")
     public Map<String, String> health() {
-        return Map.of("status", "UP", "service", "user-service", "version", "3.0", "message", "Improved CI/CD Pipeline");
+        return Map.of("status", "UP", "service", "user-service", "version", "3.1", "message", "Optimized CI/CD - Only Changed Services");
     }
 }
