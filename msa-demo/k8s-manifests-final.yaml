@@ -23,6 +23,8 @@ spec:
       annotations:
         instrumentation.opentelemetry.io/inject-java: "opentelemetry-system/java-instrumentation"
     spec:
+      imagePullSecrets:
+      - name: ecr-secret
       containers:
       - name: user-service
         image: 557690584596.dkr.ecr.ap-northeast-2.amazonaws.com/gitops/msa-app:payment-service-e1094c1d17e3d7e82a844f95c32a5a227cb36994
@@ -73,6 +75,8 @@ spec:
       annotations:
         instrumentation.opentelemetry.io/inject-java: "opentelemetry-system/java-instrumentation"
     spec:
+      imagePullSecrets:
+      - name: ecr-secret
       containers:
       - name: order-service
         image: 557690584596.dkr.ecr.ap-northeast-2.amazonaws.com/gitops/msa-app:order-service-latest
@@ -123,6 +127,8 @@ spec:
       annotations:
         instrumentation.opentelemetry.io/inject-java: "opentelemetry-system/java-instrumentation"
     spec:
+      imagePullSecrets:
+      - name: ecr-secret
       containers:
       - name: payment-service
         image: 557690584596.dkr.ecr.ap-northeast-2.amazonaws.com/gitops/msa-app:payment-service-latest
