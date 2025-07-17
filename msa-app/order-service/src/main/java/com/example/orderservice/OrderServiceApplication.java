@@ -33,10 +33,13 @@ class OrderController {
         response.put("userId", userId);
         response.put("orders", List.of(
             Map.of("orderId", "order-" + userId + "-1", "amount", 100.0, "status", "completed"),
-            Map.of("orderId", "order-" + userId + "-2", "amount", 250.0, "status", "pending")
+            Map.of("orderId", "order-" + userId + "-2", "amount", 250.0, "status", "pending"),
+            Map.of("orderId", "order-" + userId + "-3", "amount", 75.0, "status", "shipped")
         ));
-        response.put("totalOrders", 2);
+        response.put("totalOrders", 3);
         response.put("service", "order-service");
+        response.put("version", "2.0");
+        response.put("lastUpdated", java.time.LocalDateTime.now().toString());
         
         return response;
     }
@@ -61,6 +64,6 @@ class OrderController {
 
     @GetMapping("/health")
     public Map<String, String> health() {
-        return Map.of("status", "UP", "service", "order-service");
+        return Map.of("status", "UP", "service", "order-service", "version", "2.0", "message", "Enhanced Order Service");
     }
 }

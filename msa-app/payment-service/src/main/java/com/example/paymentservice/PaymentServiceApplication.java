@@ -33,10 +33,13 @@ class PaymentController {
         response.put("userId", userId);
         response.put("payments", List.of(
             Map.of("paymentId", "pay-" + userId + "-1", "amount", 100.0, "status", "completed", "method", "credit_card"),
-            Map.of("paymentId", "pay-" + userId + "-2", "amount", 250.0, "status", "pending", "method", "bank_transfer")
+            Map.of("paymentId", "pay-" + userId + "-2", "amount", 250.0, "status", "pending", "method", "bank_transfer"),
+            Map.of("paymentId", "pay-" + userId + "-3", "amount", 75.0, "status", "completed", "method", "paypal")
         ));
-        response.put("totalAmount", 350.0);
+        response.put("totalAmount", 425.0);
         response.put("service", "payment-service");
+        response.put("version", "2.0");
+        response.put("lastUpdated", java.time.LocalDateTime.now().toString());
         
         return response;
     }
@@ -61,6 +64,6 @@ class PaymentController {
 
     @GetMapping("/health")
     public Map<String, String> health() {
-        return Map.of("status", "UP", "service", "payment-service");
+        return Map.of("status", "UP", "service", "payment-service", "version", "2.0", "message", "Secure Payment Gateway");
     }
 }
