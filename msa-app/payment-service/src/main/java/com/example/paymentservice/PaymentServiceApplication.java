@@ -38,7 +38,7 @@ class PaymentController {
         ));
         response.put("totalAmount", 425.0);
         response.put("service", "payment-service");
-        response.put("version", "2.0");
+        response.put("version", "3.0");
         response.put("lastUpdated", java.time.LocalDateTime.now().toString());
         
         return response;
@@ -64,6 +64,6 @@ class PaymentController {
 
     @GetMapping("/health")
     public Map<String, String> health() {
-        return Map.of("status", "UP", "service", "payment-service", "version", "2.0", "message", "Secure Payment Gateway");
+        return Map.of("status", "UP", "service", "payment-service", "version", "3.0", "message", "Enhanced Payment Gateway v3.0");
     }
 }
