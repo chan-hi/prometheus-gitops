@@ -13,16 +13,54 @@ env:
   ECR_REPOSITORY: 557690584596.dkr.ecr.ap-northeast-2.amazonaws.com/gitops/msa-app
   
 jobs:
-  build:
+  detect-changes:
     runs-on: self-hosted
-    strategy:
-      matrix:
-        service: [user-service, order-service, payment-service]
     outputs:
-      user-service-tag: ${{ steps.set-output.outputs.user-service-tag }}
-      order-service-tag: ${{ steps.set-output.outputs.order-service-tag }}
-      payment-service-tag: ${{ steps.set-output.outputs.payment-service-tag }}
-    
+      user-service: ${{ steps.changes.outputs.user-service }}
+      order-service: ${{ steps.changes.outputs.order-service }}
+      payment-service: ${{ steps.changes.outputs.payment-service }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Detect changes
+      id: changes
+      run: |
+        # Get list of changed files
+        CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+        echo "Changed files: $CHANGED_FILES"
+        
+        # Check if each service has changes
+        if echo "$CHANGED_FILES" | grep -q "msa-app/user-service/"; then
+          echo "user-service=true" >> $GITHUB_OUTPUT
+          echo "✅ user-service has changes"
+        else
+          echo "user-service=false" >> $GITHUB_OUTPUT
+          echo "❌ user-service has no changes"
+        fi
+        
+        if echo "$CHANGED_FILES" | grep -q "msa-app/order-service/"; then
+          echo "order-service=true" >> $GITHUB_OUTPUT
+          echo "✅ order-service has changes"
+        else
+          echo "order-service=false" >> $GITHUB_OUTPUT
+          echo "❌ order-service has no changes"
+        fi
+        
+        if echo "$CHANGED_FILES" | grep -q "msa-app/payment-service/"; then
+          echo "payment-service=true" >> $GITHUB_OUTPUT
+          echo "✅ payment-service has changes"
+        else
+          echo "payment-service=false" >> $GITHUB_OUTPUT
+          echo "❌ payment-service has no changes"
+        fi
+
+  build-user-service:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.user-service == 'true'
+    runs-on: self-hosted
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -36,24 +74,76 @@ jobs:
       run: |
         aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REPOSITORY }}
 
-    - name: Build Docker image
+    - name: Build and push user-service
       run: |
-        cd msa-app/${{ matrix.service }}
-        docker build -t ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-${{ github.sha }} .
-        docker tag ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-${{ github.sha }} ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-latest
+        echo "🔨 Building user-service..."
+        cd msa-app/user-service
+        docker build -t ${{ env.ECR_REPOSITORY }}:user-service-${{ github.sha }} .
+        docker tag ${{ env.ECR_REPOSITORY }}:user-service-${{ github.sha }} ${{ env.ECR_REPOSITORY }}:user-service-latest
+        
+        echo "📤 Pushing user-service to ECR..."
+        docker push ${{ env.ECR_REPOSITORY }}:user-service-${{ github.sha }}
+        docker push ${{ env.ECR_REPOSITORY }}:user-service-latest
 
-    - name: Push Docker image to ECR
-      run: |
-        docker push ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-${{ github.sha }}
-        docker push ${{ env.ECR_REPOSITORY }}:${{ matrix.service }}-latest
+  build-order-service:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.order-service == 'true'
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Set output
-      id: set-output
+    - name: Configure AWS credentials
       run: |
-        echo "${{ matrix.service }}-tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+        echo "Using local AWS credentials"
+        aws sts get-caller-identity
+
+    - name: Login to Amazon ECR
+      run: |
+        aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REPOSITORY }}
+
+    - name: Build and push order-service
+      run: |
+        echo "🔨 Building order-service..."
+        cd msa-app/order-service
+        docker build -t ${{ env.ECR_REPOSITORY }}:order-service-${{ github.sha }} .
+        docker tag ${{ env.ECR_REPOSITORY }}:order-service-${{ github.sha }} ${{ env.ECR_REPOSITORY }}:order-service-latest
+        
+        echo "📤 Pushing order-service to ECR..."
+        docker push ${{ env.ECR_REPOSITORY }}:order-service-${{ github.sha }}
+        docker push ${{ env.ECR_REPOSITORY }}:order-service-latest
+
+  build-payment-service:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.payment-service == 'true'
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      run: |
+        echo "Using local AWS credentials"
+        aws sts get-caller-identity
+
+    - name: Login to Amazon ECR
+      run: |
+        aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REPOSITORY }}
+
+    - name: Build and push payment-service
+      run: |
+        echo "🔨 Building payment-service..."
+        cd msa-app/payment-service
+        docker build -t ${{ env.ECR_REPOSITORY }}:payment-service-${{ github.sha }} .
+        docker tag ${{ env.ECR_REPOSITORY }}:payment-service-${{ github.sha }} ${{ env.ECR_REPOSITORY }}:payment-service-latest
+        
+        echo "📤 Pushing payment-service to ECR..."
+        docker push ${{ env.ECR_REPOSITORY }}:payment-service-${{ github.sha }}
+        docker push ${{ env.ECR_REPOSITORY }}:payment-service-latest
 
   update-manifests:
-    needs: build
+    needs: [detect-changes, build-user-service, build-order-service, build-payment-service]
+    if: always() && (needs.build-user-service.result == 'success' || needs.build-order-service.result == 'success' || needs.build-payment-service.result == 'success' || needs.build-user-service.result == 'skipped' || needs.build-order-service.result == 'skipped' || needs.build-payment-service.result == 'skipped')
     runs-on: self-hosted
     steps:
     - name: Checkout code
@@ -64,10 +154,29 @@ jobs:
 
     - name: Update Kubernetes manifests
       run: |
-        # Update each service image tag
-        sed -i 's|${{ env.ECR_REPOSITORY }}:user-service-.*|${{ env.ECR_REPOSITORY }}:user-service-${{ github.sha }}|g' msa-demo/k8s-manifests-final.yaml
-        sed -i 's|${{ env.ECR_REPOSITORY }}:order-service-.*|${{ env.ECR_REPOSITORY }}:order-service-${{ github.sha }}|g' msa-demo/k8s-manifests-final.yaml
-        sed -i 's|${{ env.ECR_REPOSITORY }}:payment-service-.*|${{ env.ECR_REPOSITORY }}:payment-service-${{ github.sha }}|g' msa-demo/k8s-manifests-final.yaml
+        UPDATED_SERVICES=""
+        
+        # Only update manifests for services that were actually built
+        if [[ "${{ needs.detect-changes.outputs.user-service }}" == "true" ]]; then
+          echo "🔄 Updating user-service manifest..."
+          sed -i 's|${{ env.ECR_REPOSITORY }}:user-service-.*|${{ env.ECR_REPOSITORY }}:user-service-${{ github.sha }}|g' msa-demo/k8s-manifests-final.yaml
+          UPDATED_SERVICES="$UPDATED_SERVICES user-service"
+        fi
+        
+        if [[ "${{ needs.detect-changes.outputs.order-service }}" == "true" ]]; then
+          echo "🔄 Updating order-service manifest..."
+          sed -i 's|${{ env.ECR_REPOSITORY }}:order-service-.*|${{ env.ECR_REPOSITORY }}:order-service-${{ github.sha }}|g' msa-demo/k8s-manifests-final.yaml
+          UPDATED_SERVICES="$UPDATED_SERVICES order-service"
+        fi
+        
+        if [[ "${{ needs.detect-changes.outputs.payment-service }}" == "true" ]]; then
+          echo "🔄 Updating payment-service manifest..."
+          sed -i 's|${{ env.ECR_REPOSITORY }}:payment-service-.*|${{ env.ECR_REPOSITORY }}:payment-service-${{ github.sha }}|g' msa-demo/k8s-manifests-final.yaml
+          UPDATED_SERVICES="$UPDATED_SERVICES payment-service"
+        fi
+        
+        echo "Updated services: $UPDATED_SERVICES"
+        echo "UPDATED_SERVICES=$UPDATED_SERVICES" >> $GITHUB_ENV
 
     - name: Update ECR secret
       run: |
@@ -84,17 +193,27 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add msa-demo/k8s-manifests-final.yaml
+        
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
-          git commit -m "Update MSA services to SHA ${{ github.sha }}"
+          if [[ -n "$UPDATED_SERVICES" ]]; then
+            git commit -m "Update images for:$UPDATED_SERVICES to SHA ${{ github.sha }}"
+          else
+            git commit -m "Update manifests to SHA ${{ github.sha }}"
+          fi
           git push
         fi
 
     - name: Trigger ArgoCD Sync
       run: |
-        sleep 15  # Wait for git push to complete
-        curl -k -X POST https://192.168.49.2:30169/api/v1/applications/msa-demo/sync \
-          -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
-          -H "Content-Type: application/json" \
-          -d '{}'
+        if [[ -n "$UPDATED_SERVICES" ]]; then
+          echo "🚀 Triggering ArgoCD sync for updated services:$UPDATED_SERVICES"
+          sleep 15  # Wait for git push to complete
+          curl -k -X POST https://192.168.49.2:30169/api/v1/applications/msa-demo/sync \
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+        else
+          echo "No services updated, skipping ArgoCD sync"
+        fi
