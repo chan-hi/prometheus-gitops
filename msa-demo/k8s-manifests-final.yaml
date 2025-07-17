@@ -27,7 +27,7 @@ spec:
       - name: ecr-secret
       containers:
       - name: user-service
-        image: 557690584596.dkr.ecr.ap-northeast-2.amazonaws.com/gitops/msa-app:payment-service-e1094c1d17e3d7e82a844f95c32a5a227cb36994
+        image: 557690584596.dkr.ecr.ap-northeast-2.amazonaws.com/gitops/msa-app:user-service-92e8c4431d5d3aca575461bc9d035dbec754e2e3
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
